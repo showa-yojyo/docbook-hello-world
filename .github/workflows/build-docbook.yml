@@ -1,4 +1,4 @@
-name: TEST
+name: TEST2
 on:
   push:
     branches:
@@ -7,14 +7,29 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out
+        uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}
           token: ${{ github.token }}
+
+      - name: Set up Pages
+        id: pages
+        uses: actions/configure-pages@v5
 
       - name: Set up DocBook
         run: sudo apt update && sudo apt install -y docbook-xml docbook-xsl libxml2-utils xsltproc
@@ -22,11 +37,18 @@ jobs:
       - name: Build document
         run: make -C ./source html-chunk
 
-      - name: Deploy artifacts
-        uses: peaceiris/actions-gh-pages@v4
-        if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          enable_jekyll: false
-          force_orphan: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/html-chunk
+          path: ./build/html-chunk
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
