@@ -1,4 +1,4 @@
-name: TEST3
+name: TEST2
 on:
   push:
     branches:
@@ -18,16 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  setup_docbook:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up DocBook
-        run: |
-          sudo apt update
-          sudo apt install -y docbook-xml docbook-xsl libxml2-utils xsltproc
-
   build:
-    needs: setup_docbook
     runs-on: ubuntu-latest
     steps:
       - name: Check out
@@ -39,6 +30,9 @@ jobs:
       - name: Set up Pages
         id: pages
         uses: actions/configure-pages@v5
+
+      - name: Set up DocBook
+        run: sudo apt update && sudo apt install -y docbook-xml docbook-xsl libxml2-utils xsltproc
 
       - name: Build document
         run: make -C ./source html-chunk
