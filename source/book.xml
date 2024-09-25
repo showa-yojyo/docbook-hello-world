@@ -3,14 +3,5 @@
   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <book id="index" lang="ja">
   <title>Hello DocBook</title>
-  <bookinfo>
-    <copyright>
-      <year>2024</year>
-      <holder>
-        <ulink url="https://showa-yojyo.github.io/">プレハブ小屋</ulink>
-      </holder>
-    </copyright>
-    <pubdate>2024-09-22 (Sun)</pubdate>
-    <releaseinfo>Version 1.2</releaseinfo>
-  </bookinfo>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="version.xml" />
 </book>
